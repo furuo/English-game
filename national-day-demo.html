@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>National Day! 国庆节 - 英语启蒙小游戏（独立体验版）</title>
+<!-- 独立体验版：单文件自包含，不依赖项目公共样式，也不链接任何系列页面 -->
+<style>
+/* ============================================================
+   以下为 css/game-common.css 的内联副本（仅为让本文件可独立分发）
+   结构骨架 + 默认主题变量；本页主题色由下方第二段 <style> 覆盖
+   ============================================================ */
+:root {
+  --bg: linear-gradient(180deg, #8fd3ff 0%, #c9ecff 45%, #ffeec2 78%, #ffd98a 100%);
+
+  --chip-shadow: rgba(0,0,0,.08);
+  --primary: #FF6B6B;
+  --primary-shadow: #ffe2e2;
+  --star-dash: #f0c94a;
+  --star-earned-bg: #FFF8DC;
+  --star-earned-border: #FFD700;
+
+  --bubble-shadow: rgba(60,90,130,.18);
+  --bubble-cn: #8a8a8a;
+  --speaker-bg: #4ECDC4;
+  --speaker-shadow: #3BA99E;
+
+  --scene-shadow: rgba(120,70,20,.15);
+  --hotring-stroke: #FFB300;
+
+  --hint-color: #9a8a70;
+  --hint-shadow: rgba(60,90,130,.12);
+
+  --overlay-bg: rgba(70,110,150,.35);
+  --panel-shadow: rgba(0,0,0,.25);
+  --sub-color: #4ECDC4;
+  --intro-color: #777;
+  --intro-bg: #f6fbff;
+
+  --btn-from: #FF6B6B;
+  --btn-to: #EE5A5A;
+  --btn-shadow: #C44545;
+  --btn-glow: rgba(0,0,0,.18);
+  --btn2-from: #4ECDC4;
+  --btn2-to: #3BA99E;
+  --btn2-shadow: #2E8B82;
+
+  --home-color: #4ECDC4;
+  --home-bg: #f2fbf9;
+
+  --wc-phon: #9a9a9a;
+  --wc-cn: #666;
+  --wc-sentence-bg: #E8FAF8;
+  --wc-sentence-color: #2E8B82;
+  --round-bg: #4ECDC4;
+  --round-shadow: #2E8B82;
+
+  --finish-bg: rgba(255,210,120,.45);
+
+  --cls-overlay-bg: rgba(60,90,130,.55);
+  --cls-bg: #fffdf7;
+  --cls-head-bg: #FFF8DC;
+  --cls-head-color: #B8860B;
+  --cls-dot: #e7e3d8; --cls-dot-on: #FF6B6B;
+  --cls-tip: #8a8a8a;
+  --cls-card-bg: #fff; --cls-card-border: #ffe2bb; --cls-card-done-bg: #f1faf3;
+  --cls-en-color: #FF6B6B; --cls-cn-color: #777;
+  --cls-tile-bg: #fff; --cls-tile-border: #ffe2bb;
+  --cls-tag-bg: #FFF8DC; --cls-tag-color: #8a6a1f; --cls-tag-border: #ffd98a;
+  --cls-sel: #FFB300; --cls-sel-glow: rgba(255,179,0,.3);
+  --cls-ok: #4CAF50; --cls-ok-bg: #eaf7ec; --cls-wrong: #ef9a9a;
+
+  --sun-top: 26px; --sun-right: 34px; --sun-size: 70px;
+  --sun-core: #FFE066; --sun-edge: #FFB300; --sun-glow: #FFD54F;
+  --moon-top: 26px; --moon-right: 34px; --moon-size: 64px;
+
+  --app-w: 520px;
+  --app-w-lg: 620px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  font-family: "Comic Sans MS", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  overflow: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+.sun-bg {
+  position: fixed; top: var(--sun-top); right: var(--sun-right);
+  width: var(--sun-size); height: var(--sun-size);
+  background: radial-gradient(circle, var(--sun-core), var(--sun-edge));
+  border-radius: 50%;
+  box-shadow: 0 0 34px var(--sun-glow);
+  animation: sunPulse 2.4s ease-in-out infinite;
+  z-index: 0;
+}
+@keyframes sunPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+.moon-bg {
+  position: fixed; top: var(--moon-top); right: var(--moon-right);
+  width: var(--moon-size); height: var(--moon-size);
+  background: radial-gradient(circle, #fffde7, #fff59d);
+  border-radius: 50%;
+  box-shadow: 0 0 30px #fff9c4;
+  animation: moonPulse 3s ease-in-out infinite;
+  z-index: 0;
+}
+@keyframes moonPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+
+#app {
+  position: relative; z-index: 2;
+  height: 100vh; height: 100dvh;
+  max-width: var(--app-w); margin: 0 auto;
+  display: flex; flex-direction: column;
+  padding: max(10px, env(safe-area-inset-top)) 12px max(8px, env(safe-area-inset-bottom));
+}
+.hud { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.hud-title {
+  background: #fff; border-radius: 30px;
+  padding: 8px 16px;
+  font-size: clamp(.95rem, 4vw, 1.15rem);
+  font-weight: bold; color: var(--primary);
+  box-shadow: 0 4px 0 var(--chip-shadow);
+  text-decoration: none; white-space: nowrap;
+}
+.stars { display: flex; gap: 6px; background: #fff; border-radius: 30px; padding: 7px 14px; box-shadow: 0 4px 0 var(--chip-shadow); }
+.star-slot {
+  width: 28px; height: 28px;
+  border: 2px dashed var(--star-dash); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; transition: all .3s;
+}
+.star-slot.earned { background: var(--star-earned-bg); border: 2px solid var(--star-earned-border); animation: slotPop .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes slotPop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+
+.bubble {
+  position: relative;
+  margin: 10px auto 0;
+  background: #fff; border-radius: 22px;
+  padding: 10px 16px 10px 12px;
+  display: flex; align-items: center; gap: 10px;
+  max-width: 100%;
+  box-shadow: 0 6px 18px var(--bubble-shadow);
+  animation: bubbleIn .4s ease;
+}
+@keyframes bubbleIn { from { opacity: 0; transform: translateY(-8px) scale(.9);} to { opacity: 1; transform: none; } }
+.speaker-btn {
+  flex: none;
+  background: var(--speaker-bg); color: #fff; border: none;
+  width: 42px; height: 42px; border-radius: 50%;
+  font-size: 1.2rem; cursor: pointer;
+  box-shadow: 0 4px 0 var(--speaker-shadow);
+}
+.speaker-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--speaker-shadow); }
+.bubble-text { line-height: 1.3; }
+.bubble-en { font-size: clamp(1rem, 4.4vw, 1.35rem); font-weight: bold; color: var(--primary); }
+.bubble-cn { font-size: clamp(.76rem, 3vw, .9rem); color: var(--bubble-cn); }
+
+.stage { position: relative; flex: 1; min-height: 0; display: flex; align-items: flex-end; justify-content: center; }
+#sceneSvg { height: 100%; width: auto; max-width: 100%; filter: drop-shadow(0 6px 6px var(--scene-shadow)); }
+
+.hot { cursor: pointer; }
+.hotring {
+  opacity: 0;
+  stroke: var(--hotring-stroke); stroke-width: 4;
+  stroke-dasharray: 8 7; fill: rgba(0,0,0,0.001);
+  pointer-events: none;
+  transform-box: fill-box; transform-origin: center;
+}
+.hot .hotring { animation: ringPulse 1s ease-in-out infinite; pointer-events: all; }
+@keyframes ringPulse {
+  0%,100% { opacity: .35; transform: scale(.96); }
+  50% { opacity: 1; transform: scale(1.07); }
+}
+
+.layer { opacity: 0; transform: scale(.3); transform-box: fill-box; transform-origin: center; }
+.layer.on { animation: layerPop .55s cubic-bezier(.34,1.6,.5,1) forwards; }
+@keyframes layerPop {
+  0% { opacity: 0; transform: scale(.2); }
+  70% { opacity: 1; transform: scale(1.12); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.sparkle {
+  position: absolute; z-index: 5;
+  font-size: 1.5rem; pointer-events: none;
+  animation: sparkleRise 1s ease-out forwards;
+}
+@keyframes sparkleRise {
+  0% { opacity: 1; transform: translateY(0) scale(.6); }
+  100% { opacity: 0; transform: translateY(-70px) scale(1.3) rotate(25deg); }
+}
+
+.hint-bar {
+  position: relative; z-index: 3;
+  text-align: center;
+  background: rgba(255,255,255,.92);
+  border-radius: 18px;
+  padding: 9px 14px;
+  font-size: clamp(.8rem, 3.2vw, .95rem);
+  color: var(--hint-color);
+  box-shadow: 0 -2px 14px var(--hint-shadow);
+}
+
+.overlay {
+  position: absolute; inset: 0; z-index: 20;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  background: var(--overlay-bg);
+}
+.overlay.hidden { display: none; }
+.panel {
+  background: #fff; border-radius: 30px;
+  padding: 28px 26px; text-align: center;
+  box-shadow: 0 14px 40px var(--panel-shadow);
+  max-width: 400px; width: 100%;
+  animation: panelIn .45s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes panelIn { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.big-emoji { font-size: 4.6rem; line-height: 1; margin-bottom: 8px; }
+.big-emoji svg { width: 1em; height: 1em; vertical-align: -0.08em; }
+.big-emoji.swing { display: inline-block; animation: swing 1.6s ease-in-out infinite; }
+@keyframes swing { 0%,100% { transform: rotate(-6deg);} 50% { transform: rotate(6deg);} }
+.panel h1 { font-size: clamp(1.6rem, 6.5vw, 2.3rem); color: var(--primary); text-shadow: 2px 2px 0 var(--primary-shadow); margin-bottom: 6px; }
+.panel .sub { color: var(--sub-color); font-weight: bold; font-size: 1.05rem; margin-bottom: 14px; }
+.panel .intro {
+  color: var(--intro-color); font-size: .95rem; line-height: 1.7;
+  background: var(--intro-bg); border-radius: 16px; padding: 12px 14px; margin-bottom: 18px;
+}
+.item-row { font-size: 2.2rem; margin-bottom: 14px; letter-spacing: 4px; }
+.item-row svg { width: 1em; height: 1em; vertical-align: -0.08em; }
+
+.btn {
+  background: linear-gradient(180deg, var(--btn-from), var(--btn-to));
+  color: #fff; border: none;
+  padding: 15px 40px;
+  font-size: clamp(1.1rem, 4.5vw, 1.45rem);
+  font-family: inherit; font-weight: bold;
+  border-radius: 50px; cursor: pointer;
+  box-shadow: 0 6px 0 var(--btn-shadow), 0 8px 18px var(--btn-glow);
+  transition: all .1s;
+}
+.btn:active { transform: translateY(5px); box-shadow: 0 1px 0 var(--btn-shadow); }
+.btn.teal, .btn.orange, .btn.coral {
+  background: linear-gradient(180deg, var(--btn2-from), var(--btn2-to));
+  box-shadow: 0 6px 0 var(--btn2-shadow), 0 8px 18px var(--btn-glow);
+}
+.btn.teal:active, .btn.orange:active, .btn.coral:active { box-shadow: 0 1px 0 var(--btn2-shadow); }
+.home-link {
+  display: inline-block; margin-top: 14px;
+  color: var(--home-color); font-weight: bold; font-size: .92rem;
+  text-decoration: none; background: var(--home-bg);
+  padding: 7px 18px; border-radius: 30px;
+  box-shadow: 0 2px 0 rgba(0,0,0,.08);
+}
+.home-link:active { transform: translateY(2px); }
+
+.wordcard .wc-emoji { font-size: 4.5rem; animation: wcBounce 1.2s ease-in-out infinite; }
+.wordcard .wc-emoji svg { width: 1em; height: 1em; vertical-align: -0.08em; }
+@keyframes wcBounce { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-8px);} }
+.wordcard .wc-en { font-size: clamp(2rem, 9vw, 2.8rem); color: var(--primary); font-weight: bold; margin-top: 4px; }
+.wordcard .wc-phon { color: var(--wc-phon); font-size: 1.05rem; margin-top: 2px; }
+.wordcard .wc-cn { color: var(--wc-cn); font-size: 1.1rem; margin: 6px 0 10px; }
+.wordcard .wc-sentence {
+  display: inline-block;
+  background: var(--wc-sentence-bg); color: var(--wc-sentence-color);
+  border-radius: 16px; padding: 9px 16px;
+  font-weight: bold; font-size: 1.02rem; margin-bottom: 16px;
+}
+.wc-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; align-items: center; }
+.round-btn {
+  width: 54px; height: 54px; border-radius: 50%; border: none;
+  background: var(--round-bg); color: #fff; font-size: 1.5rem; cursor: pointer;
+  box-shadow: 0 5px 0 var(--round-shadow);
+}
+.round-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--round-shadow); }
+
+#finishOverlay { background: var(--finish-bg); overflow: hidden; }
+.finish-stars { font-size: 2.2rem; letter-spacing: 8px; margin: 10px 0; }
+.finish-stars span { display: inline-block; animation: starDrop .5s ease backwards; }
+.finish-stars span:nth-child(1) { animation-delay: .2s; }
+.finish-stars span:nth-child(2) { animation-delay: .4s; }
+.finish-stars span:nth-child(3) { animation-delay: .6s; }
+.finish-stars span:nth-child(4) { animation-delay: .8s; }
+.finish-stars span:nth-child(5) { animation-delay: 1s; }
+@keyframes starDrop { from { transform: translateY(-30px) scale(0); opacity: 0;} to { transform: none; opacity: 1;} }
+.confetti-piece { position: absolute; top: -24px; width: 10px; height: 14px; border-radius: 2px; animation: confettiFall linear forwards; }
+@keyframes confettiFall { 0% { transform: translateY(-30px) rotate(0); } 100% { transform: translateY(110vh) rotate(720deg); } }
+
+/* ---------- 节日小课堂（玩法前置知识热身） ---------- */
+.overlay.classroom-layer { z-index: 30; background: var(--cls-overlay-bg); }
+.classroom {
+  background: var(--cls-bg); position: relative;
+  max-width: 420px; max-height: 100%; overflow-y: auto;
+  padding: 22px 20px 18px;
+}
+.classroom .cls-title {
+  display: inline-block;
+  background: var(--cls-head-bg); color: var(--cls-head-color);
+  border-radius: 30px; padding: 6px 18px;
+  font-size: 1.05rem; font-weight: bold;
+}
+.classroom .cls-dots { display: flex; gap: 6px; justify-content: center; margin: 11px 0 10px; }
+.classroom .cls-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--cls-dot); transition: all .3s; }
+.classroom .cls-dot.on { background: var(--cls-dot-on); transform: scale(1.3); }
+.classroom .cls-tip { color: var(--cls-tip); font-size: 1rem; line-height: 1.6; margin: 11px 2px 14px; }
+.classroom .cls-actions .btn:disabled { filter: grayscale(.65); opacity: .55; box-shadow: 0 3px 0 var(--btn-shadow); cursor: default; }
+
+.cls-origin { display: flex; flex-direction: column; gap: 8px; }
+.cls-card {
+  display: flex; align-items: center; gap: 10px; text-align: left;
+  background: var(--cls-card-bg); border: 2px solid var(--cls-card-border);
+  border-radius: 18px; padding: 8px 12px; font-family: inherit; cursor: pointer;
+  transition: transform .15s, border-color .25s, background .25s;
+}
+.cls-card:active { transform: scale(.97); }
+.cls-card.read { border-color: var(--cls-ok); background: var(--cls-card-done-bg); }
+.cls-ill { flex: none; width: 54px; height: 54px; }
+.cls-ill svg { width: 100%; height: 100%; display: block; }
+.cls-text { flex: 1; min-width: 0; }
+.cls-en { display: block; color: var(--cls-en-color); font-weight: bold; font-size: 1.14rem; line-height: 1.35; }
+.cls-cn { display: block; color: var(--cls-cn-color); font-size: .94rem; line-height: 1.45; margin-top: 2px; }
+.cls-read { flex: none; font-size: 1.15rem; opacity: .35; transition: opacity .25s; }
+.cls-card.read .cls-read { opacity: 1; }
+
+.cls-match { display: flex; flex-direction: column; gap: 12px; }
+.cls-icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.cls-tile {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: var(--cls-tile-bg); border: 2px solid var(--cls-tile-border);
+  border-radius: 16px; padding: 8px 3px 5px; font-family: inherit; cursor: pointer;
+  transition: transform .15s, border-color .25s, background .25s, box-shadow .25s;
+}
+.cls-tile svg { width: 42px; height: 42px; display: block; }
+.cls-tile .cls-tile-cn { font-size: .86rem; color: var(--cls-cn-color); }
+.cls-tile.sel { border-color: var(--cls-sel); box-shadow: 0 0 0 3px var(--cls-sel-glow); transform: translateY(-2px); }
+.cls-tile.done { border-color: var(--cls-ok); background: var(--cls-ok-bg); }
+.cls-tile.done::after {
+  content: '✓'; position: absolute; top: -7px; right: -7px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--cls-ok); color: #fff; font-size: .78rem; line-height: 22px; text-align: center;
+}
+.cls-tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.cls-tag {
+  background: var(--cls-tag-bg); color: var(--cls-tag-color);
+  border: 2px solid var(--cls-tag-border); border-radius: 30px;
+  padding: 8px 16px; font-family: inherit; font-size: 1.05rem; font-weight: bold; cursor: pointer;
+  transition: transform .15s, background .25s, border-color .25s;
+}
+.cls-tag:active { transform: scale(.96); }
+.cls-tag.done { background: var(--cls-ok); border-color: var(--cls-ok); color: #fff; opacity: .85; cursor: default; }
+.cls-tag.wrong { border-color: var(--cls-wrong); animation: clsShake .4s; }
+@keyframes clsShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+.cls-question { color: var(--cls-en-color); font-weight: bold; font-size: 1.18rem; line-height: 1.4; }
+.cls-question-cn { color: var(--cls-cn-color); font-size: .96rem; margin: 4px 0 12px; }
+.cls-options { display: flex; flex-direction: column; gap: 8px; }
+.cls-option {
+  display: flex; align-items: center; gap: 8px; text-align: left;
+  background: var(--cls-card-bg); border: 2px solid var(--cls-card-border);
+  border-radius: 16px; padding: 11px 15px; font-family: inherit;
+  color: var(--cls-en-color); font-weight: bold; font-size: 1.08rem; cursor: pointer;
+  transition: transform .15s, border-color .25s, background .25s;
+}
+.cls-option:active { transform: scale(.98); }
+.cls-option.ok { border-color: var(--cls-ok); background: var(--cls-ok-bg); }
+.cls-option.wrong { border-color: var(--cls-wrong); animation: clsShake .4s; }
+.cls-option-cn { margin-left: auto; color: var(--cls-cn-color); font-size: .92rem; font-weight: normal; }
+
+@media (max-height: 660px) {
+  .panel { padding: 18px 20px; }
+  .big-emoji { font-size: 3.4rem; }
+  .wordcard .wc-emoji { font-size: 3.2rem; }
+  .classroom { padding: 16px 16px 14px; }
+}
+
+@media (min-width: 900px) and (min-height: 700px) {
+  #app { max-width: var(--app-w-lg); }
+}
+
+@media (max-height: 560px) {
+  #app { padding: 6px 10px 4px; }
+  .hud { gap: 6px; }
+  .hud-title { padding: 5px 13px; font-size: .88rem; box-shadow: 0 3px 0 var(--chip-shadow); }
+  .stars { padding: 4px 10px; gap: 4px; box-shadow: 0 3px 0 var(--chip-shadow); }
+  .star-slot { width: 20px; height: 20px; font-size: .78rem; border-width: 1px; }
+  .bubble { margin-top: 5px; padding: 6px 12px 6px 9px; gap: 8px; border-radius: 18px; }
+  .speaker-btn { width: 32px; height: 32px; font-size: .95rem; box-shadow: 0 3px 0 var(--speaker-shadow); }
+  .bubble-en { font-size: .95rem; }
+  .bubble-cn { font-size: .72rem; }
+  .hint-bar { padding: 5px 12px; font-size: .8rem; border-radius: 14px; }
+  .wordcard .wc-emoji { font-size: 2.6rem; }
+  .wordcard .wc-en { font-size: 1.7rem; }
+  .wordcard .wc-phon { font-size: .9rem; }
+  .wordcard .wc-cn { font-size: .95rem; margin: 4px 0 8px; }
+  .wordcard .wc-sentence { font-size: .88rem; padding: 7px 13px; margin-bottom: 12px; }
+  .classroom { padding: 10px 12px 9px; }
+  .classroom .cls-title { font-size: .88rem; padding: 4px 13px; }
+  .classroom .cls-dots { margin: 5px 0 5px; }
+  .classroom .cls-dot { width: 7px; height: 7px; }
+  .classroom .cls-tip { font-size: .86rem; margin: 5px 2px 7px; line-height: 1.45; }
+  .cls-origin { gap: 6px; }
+  .cls-card { padding: 4px 9px; gap: 8px; border-radius: 14px; }
+  .cls-ill { width: 38px; height: 38px; }
+  .cls-en { font-size: .98rem; }
+  .cls-cn { font-size: .82rem; }
+  .cls-read { font-size: 1rem; }
+  .cls-match { gap: 9px; }
+  .cls-icons { gap: 6px; }
+  .cls-tile { padding: 5px 2px 3px; border-radius: 13px; }
+  .cls-tile svg { width: 32px; height: 32px; }
+  .cls-tile .cls-tile-cn { font-size: .76rem; }
+  .cls-tags { gap: 6px; }
+  .cls-tag { padding: 5px 12px; font-size: .9rem; }
+  .cls-option { padding: 6px 11px; font-size: .95rem; border-radius: 13px; }
+  .cls-option-cn { font-size: .8rem; }
+  .cls-question { font-size: 1.02rem; }
+  .cls-question-cn { font-size: .84rem; margin: 3px 0 8px; }
+  .btn { padding: 9px 26px; }
+  .home-link { margin-top: 10px; }
+}
+</style>
+<style>
+  /* ---------- 国庆主题：中国红 + 金 ---------- */
+  :root {
+    --bg: linear-gradient(180deg, #8e0000 0%, #c62828 40%, #ef6c00 74%, #ffca28 100%);
+    --chip-shadow: rgba(0,0,0,.18);
+    --primary: #c62828;
+    --primary-shadow: #ffe6e6;
+    --star-dash: #ffca28;
+    --star-earned-bg: #fff8e1; --star-earned-border: #ffb300;
+    --bubble-shadow: rgba(120,20,20,.28);
+    --bubble-cn: #9a8a8a;
+    --speaker-bg: #e53935; --speaker-shadow: #b71c1c;
+    --scene-shadow: rgba(120,20,20,.28);
+    --hotring-stroke: #ffca28;
+    --hint-color: #8a6a3a; --hint-shadow: rgba(120,20,20,.22);
+    --overlay-bg: rgba(110,14,14,.58);
+    --panel-shadow: rgba(0,0,0,.4);
+    --sub-color: #e53935;
+    --intro-color: #777; --intro-bg: #fff8f0;
+    --btn-from: #e53935; --btn-to: #c62828; --btn-shadow: #8e0000;
+    --btn2-from: #ffca28; --btn2-to: #f9a825; --btn2-shadow: #c17900;
+    --btn-glow: rgba(0,0,0,.25);
+    --home-color: #c62828; --home-bg: #fff5f5;
+    --wc-sentence-bg: #fff5f5; --wc-sentence-color: #c62828;
+    --round-bg: #e53935; --round-shadow: #8e0000;
+    --finish-bg: rgba(140,24,24,.62);
+    --sun-size: 52px; --sun-top: 18px; --sun-right: 22px;
+    /* 节日小课堂（中国红 + 金） */
+    --cls-overlay-bg: rgba(105,12,12,.68);
+    --cls-bg: #fffdf7;
+    --cls-head-bg: #fff3d4; --cls-head-color: #a5751f;
+    --cls-dot: #e7e3d8; --cls-dot-on: #e53935;
+    --cls-tip: #8d8a80;
+    --cls-card-bg: #fffdfa; --cls-card-border: #ffd9b0; --cls-card-done-bg: #f1faf3;
+    --cls-en-color: #c62828; --cls-cn-color: #7a7a8c;
+    --cls-tile-bg: #fffdfa; --cls-tile-border: #ffd9b0;
+    --cls-tag-bg: #fff3d4; --cls-tag-color: #a5751f; --cls-tag-border: #ffd98a;
+    --cls-sel: #f9a825; --cls-sel-glow: rgba(249,168,37,.3);
+    --cls-ok: #43a047; --cls-ok-bg: #eff9f1; --cls-wrong: #ef9a9a;
+  }
+
+  /* 背景金色星星 + 飘浮气球 */
+  .bg-star {
+    position: fixed; z-index: 0; color: #ffe082;
+    font-size: 1.1rem; opacity: .7;
+    animation: twinkle 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes twinkle { 0%,100% { opacity: .35; } 50% { opacity: .9; } }
+  .floaty {
+    position: fixed; z-index: 0; font-size: 1.5rem; opacity: .6;
+    animation: floaty 5s ease-in-out infinite; pointer-events: none;
+  }
+  @keyframes floaty { 0%,100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-18px) rotate(5deg); } }
+
+  /* 淡入图层 */
+  .fade { opacity: 0; transition: opacity .55s ease; }
+  .fade.on { opacity: 1; }
+
+  /* 烟花绽放 */
+  #fwBurst { transform-box: fill-box; transform-origin: center; }
+  #fwBurst.on { opacity: 1; animation: fwPop .8s cubic-bezier(.34,1.5,.5,1); }
+  @keyframes fwPop {
+    0% { opacity: 0; transform: scale(.2); }
+    60% { opacity: 1; transform: scale(1.16); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  #fwBurst.on .ray { animation: rayTwinkle 1.5s ease-in-out infinite; }
+  @keyframes rayTwinkle { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+
+  /* 国旗：点一下，只有红色旗面飘动，旗杆保持不动 */
+  #flag .cloth { transform-box: fill-box; transform-origin: left center; }
+  #flag.wave .cloth { animation: flagWave 1.5s ease-in-out; }
+  @keyframes flagWave {
+    0%   { transform: rotate(0deg) skewY(0deg) scaleX(1); }
+    14%  { transform: rotate(-8deg) skewY(6deg) scaleX(1.06); }
+    30%  { transform: rotate(7deg) skewY(-4.5deg) scaleX(.96); }
+    46%  { transform: rotate(-6deg) skewY(4deg) scaleX(1.05); }
+    62%  { transform: rotate(5deg) skewY(-3deg) scaleX(.97); }
+    78%  { transform: rotate(-3deg) skewY(2deg) scaleX(1.03); }
+    100% { transform: rotate(0deg) skewY(0deg) scaleX(1); }
+  }
+
+  /* 气球：点一下，慢慢升到右上方飘走消失
+     ⚠ 位置必须写在 .balpos 上、摇摆动画写在里层 .bal 上：
+       CSS transform 会覆盖 SVG 的 transform 属性，若两者写在同一元素上，
+       动画一启动气球就会丢掉位移、塌到画布左上角。 */
+  #balloon { transition: transform 2s cubic-bezier(.45,.02,.4,1), opacity 1.6s ease-in; }
+  #balloon.rise { transform: translate(115px,-270px); opacity: 0; }
+  #balloon.rise .bal { animation: balSway 1.5s ease-in-out infinite; }
+  #balloon .bal { transform-box: fill-box; transform-origin: bottom center; }
+  @keyframes balSway { 0%,100% { transform: rotate(-3.5deg); } 50% { transform: rotate(3.5deg); } }
+
+  /* 和平鸽飞起（同理：位置写在 .bird 上，扑翼动画写在里层 .flap 上） */
+  #dove { transition: transform 1.2s cubic-bezier(.4,.05,.3,1); }
+  #dove.fly { transform: translate(-26px,-78px); }
+  #dove .flap { transform-box: fill-box; transform-origin: center; }
+  #dove.fly .flap { animation: flap 1s ease-in-out infinite; }
+  #dove.fly .bird:nth-child(2) .flap { animation-delay: .18s; }
+  #dove.fly .bird:nth-child(3) .flap { animation-delay: .36s; }
+  @keyframes flap { 0%,100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-6px) rotate(3deg); } }
+
+  /* 生日蜡烛点亮 */
+  #cakeGlow { opacity: 0; transition: opacity .6s ease; transform-box: fill-box; transform-origin: center; }
+  #cakeGlow.on { opacity: 1; animation: glowPulse 1.8s ease-in-out infinite; }
+  @keyframes glowPulse { 0%,100% { transform: scale(1); opacity: .45; } 50% { transform: scale(1.14); opacity: .88; } }
+  #cakeFlame .flame { transform-box: fill-box; transform-origin: bottom center; }
+  #cakeFlame.on .flame { animation: flameFlick .5s ease-in-out infinite alternate; }
+  @keyframes flameFlick { from { transform: scaleY(.86) scaleX(.94); } to { transform: scaleY(1.1) scaleX(1.04); } }
+
+  body.celebrating .bg-star { animation-duration: 1s; }
+  body.celebrating .floaty { animation-duration: 1.8s; }
+</style>
+</head>
+<body>
+<div class="bg-star" style="top:56px;left:6%;animation-delay:.3s">✦</div>
+<div class="bg-star" style="top:132px;left:92%;animation-delay:.9s">✦</div>
+<div class="bg-star" style="top:270px;left:3%;animation-delay:1.4s">✦</div>
+<div class="floaty" style="top:96px;left:2%">🎈</div>
+<div class="floaty" style="top:330px;left:95%;animation-delay:1.1s">🎈</div>
+
+<div id="app">
+  <div class="hud">
+    <span class="hud-title">🎈 National Day!</span>
+    <div class="stars" id="stars"></div>
+  </div>
+
+  <div class="bubble">
+    <button class="speaker-btn" id="bubbleSpeak" title="再听一遍">🔊</button>
+    <div class="bubble-text">
+      <div class="bubble-en" id="bubbleEn">National Day!</div>
+      <div class="bubble-cn" id="bubbleCn">十月一日国庆节，祝祖国妈妈生日快乐</div>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg id="sceneSvg" viewBox="0 0 400 430">
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#a01010"/>
+          <stop offset="34%" stop-color="#e53935"/>
+          <stop offset="66%" stop-color="#fb8c00"/>
+          <stop offset="100%" stop-color="#ffd54f"/>
+        </linearGradient>
+        <radialGradient id="sunGrad" cx="40%" cy="36%">
+          <stop offset="0%" stop-color="#fffde7"/>
+          <stop offset="62%" stop-color="#ffe082"/>
+          <stop offset="100%" stop-color="#ffb300"/>
+        </radialGradient>
+        <radialGradient id="sunGlowGrad">
+          <stop offset="42%" stop-color="#ffd54f" stop-opacity=".8"/>
+          <stop offset="100%" stop-color="#ffd54f" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="cakeGlowGrad">
+          <stop offset="0%" stop-color="#ffd54f" stop-opacity=".85"/>
+          <stop offset="100%" stop-color="#ffd54f" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="roofGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffe082"/>
+          <stop offset="100%" stop-color="#f9a825"/>
+        </linearGradient>
+        <linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#e53935"/>
+          <stop offset="100%" stop-color="#b71c1c"/>
+        </linearGradient>
+        <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffe9b8"/>
+          <stop offset="100%" stop-color="#f6cf7a"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ===== 朝霞天空 ===== -->
+      <rect x="0" y="0" width="400" height="304" fill="url(#skyGrad)"/>
+
+      <!-- ===== 太阳 ===== -->
+      <g id="sun">
+        <circle cx="332" cy="58" r="54" fill="url(#sunGlowGrad)"/>
+        <circle cx="332" cy="58" r="27" fill="url(#sunGrad)"/>
+        <circle cx="323" cy="54" r="2.6" fill="#b26a00"/>
+        <circle cx="341" cy="54" r="2.6" fill="#b26a00"/>
+        <path d="M323 65 Q332 73 341 65" stroke="#b26a00" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="318" cy="63" r="3.4" fill="#ff9e9e" opacity=".7"/>
+        <circle cx="346" cy="63" r="3.4" fill="#ff9e9e" opacity=".7"/>
+      </g>
+
+      <!-- ===== 云 ===== -->
+      <g fill="#fff5e0" opacity=".5">
+        <ellipse cx="30" cy="40" rx="24" ry="11"/>
+        <ellipse cx="50" cy="34" rx="15" ry="9"/>
+        <ellipse cx="368" cy="120" rx="24" ry="9"/>
+      </g>
+
+      <!-- ===== 烟花（步骤 2 热点） ===== -->
+      <g id="fireworks">
+        <g id="fwBurst" class="fade">
+          <!-- 大烟花 -->
+          <g stroke="#fff59d" stroke-width="2.6" stroke-linecap="round">
+            <line class="ray" x1="76" y1="86" x2="108" y2="86"/>
+            <line class="ray" x1="76" y1="86" x2="102" y2="105"/>
+            <line class="ray" x1="76" y1="86" x2="86" y2="116"/>
+            <line class="ray" x1="76" y1="86" x2="66" y2="116"/>
+            <line class="ray" x1="76" y1="86" x2="50" y2="105"/>
+            <line class="ray" x1="76" y1="86" x2="44" y2="86"/>
+            <line class="ray" x1="76" y1="86" x2="50" y2="67"/>
+            <line class="ray" x1="76" y1="86" x2="66" y2="56"/>
+            <line class="ray" x1="76" y1="86" x2="86" y2="56"/>
+            <line class="ray" x1="76" y1="86" x2="102" y2="67"/>
+          </g>
+          <g fill="#ffd54f">
+            <circle cx="108" cy="86" r="2.6"/><circle cx="102" cy="105" r="2.6"/>
+            <circle cx="86" cy="116" r="2.6"/><circle cx="66" cy="116" r="2.6"/>
+            <circle cx="50" cy="105" r="2.6"/><circle cx="44" cy="86" r="2.6"/>
+            <circle cx="50" cy="67" r="2.6"/><circle cx="66" cy="56" r="2.6"/>
+            <circle cx="86" cy="56" r="2.6"/><circle cx="102" cy="67" r="2.6"/>
+          </g>
+          <circle cx="76" cy="86" r="4" fill="#fffde7"/>
+          <!-- 中烟花 -->
+          <g stroke="#ff8a65" stroke-width="2.2" stroke-linecap="round">
+            <line class="ray" x1="128" y1="60" x2="148" y2="60"/>
+            <line class="ray" x1="128" y1="60" x2="142" y2="74"/>
+            <line class="ray" x1="128" y1="60" x2="128" y2="80"/>
+            <line class="ray" x1="128" y1="60" x2="114" y2="74"/>
+            <line class="ray" x1="128" y1="60" x2="108" y2="60"/>
+            <line class="ray" x1="128" y1="60" x2="114" y2="46"/>
+            <line class="ray" x1="128" y1="60" x2="128" y2="40"/>
+            <line class="ray" x1="128" y1="60" x2="142" y2="46"/>
+          </g>
+          <g fill="#ffe082">
+            <circle cx="148" cy="60" r="2"/><circle cx="142" cy="74" r="2"/>
+            <circle cx="128" cy="80" r="2"/><circle cx="114" cy="74" r="2"/>
+            <circle cx="108" cy="60" r="2"/><circle cx="114" cy="46" r="2"/>
+            <circle cx="128" cy="40" r="2"/><circle cx="142" cy="46" r="2"/>
+          </g>
+          <!-- 小烟花 -->
+          <g stroke="#fffde7" stroke-width="2" stroke-linecap="round">
+            <line class="ray" x1="34" y1="150" x2="50" y2="150"/>
+            <line class="ray" x1="34" y1="150" x2="45" y2="161"/>
+            <line class="ray" x1="34" y1="150" x2="34" y2="166"/>
+            <line class="ray" x1="34" y1="150" x2="23" y2="161"/>
+            <line class="ray" x1="34" y1="150" x2="18" y2="150"/>
+            <line class="ray" x1="34" y1="150" x2="23" y2="139"/>
+            <line class="ray" x1="34" y1="150" x2="34" y2="134"/>
+            <line class="ray" x1="34" y1="150" x2="45" y2="139"/>
+          </g>
+          <g fill="#ffca28">
+            <circle cx="50" cy="150" r="1.7"/><circle cx="45" cy="161" r="1.7"/>
+            <circle cx="34" cy="166" r="1.7"/><circle cx="23" cy="161" r="1.7"/>
+            <circle cx="18" cy="150" r="1.7"/><circle cx="23" cy="139" r="1.7"/>
+            <circle cx="34" cy="134" r="1.7"/><circle cx="45" cy="139" r="1.7"/>
+          </g>
+        </g>
+        <rect class="hotring" x="24" y="22" width="158" height="124" rx="32"/>
+      </g>
+
+      <!-- ===== 天安门 ===== -->
+      <g id="tiananmen">
+        <!-- 台基 -->
+        <rect x="62" y="288" width="276" height="16" rx="4" fill="#f3e3c3" stroke="#cfae7a" stroke-width="1.5"/>
+        <!-- 城墙 -->
+        <rect x="84" y="184" width="232" height="106" fill="url(#wallGrad)" stroke="#8e0000" stroke-width="1.5"/>
+        <!-- 墙顶饰带 -->
+        <rect x="78" y="176" width="244" height="9" rx="3" fill="#f7e9c9" stroke="#d9c195" stroke-width="1"/>
+        <!-- 城门洞 -->
+        <path d="M166 290 L166 256 A34 34 0 0 1 234 256 L234 290 Z" fill="#4e1414"/>
+        <path d="M108 290 L108 268 A20 20 0 0 1 148 268 L148 290 Z" fill="#4e1414"/>
+        <path d="M252 290 L252 268 A20 20 0 0 1 292 268 L292 290 Z" fill="#4e1414"/>
+        <!-- 画像 -->
+        <rect x="176" y="196" width="48" height="42" rx="4" fill="#ffe082" stroke="#c17900" stroke-width="1.6"/>
+        <circle cx="200" cy="210" r="7" fill="#e0a96d"/>
+        <path d="M187 234 Q200 216 213 234 Z" fill="#e0a96d"/>
+        <!-- 城楼 -->
+        <rect x="124" y="146" width="152" height="32" fill="url(#wallGrad)" stroke="#8e0000" stroke-width="1.5"/>
+        <circle cx="200" cy="162" r="10" fill="#ffd54f" stroke="#c17900" stroke-width="1.4"/>
+        <path d="M200 156 l1.5 3.1 3.4 .5 -2.5 2.4 .6 3.4 -3 -1.6 -3 1.6 .6 -3.4 -2.5 -2.4 3.4 -.5 z" fill="#e53935"/>
+        <!-- 下层屋檐 -->
+        <rect x="74" y="138" width="252" height="10" rx="5" fill="url(#roofGrad)" stroke="#c17900" stroke-width="1"/>
+        <path d="M78 141 q-7 0 -10 -6 q7 2 11 3 z" fill="#f9a825"/>
+        <path d="M322 141 q7 0 10 -6 q-7 2 -11 3 z" fill="#f9a825"/>
+        <!-- 下层屋面 -->
+        <path d="M156 114 L244 114 L262 138 L138 138 Z" fill="url(#roofGrad)" stroke="#c17900" stroke-width="1"/>
+        <!-- 上层屋檐 -->
+        <rect x="136" y="104" width="128" height="9" rx="4" fill="url(#roofGrad)" stroke="#c17900" stroke-width="1"/>
+        <!-- 上层屋面 -->
+        <path d="M168 84 L232 84 L248 104 L152 104 Z" fill="url(#roofGrad)" stroke="#c17900" stroke-width="1"/>
+        <!-- 正脊 -->
+        <rect x="160" y="77" width="80" height="8" rx="4" fill="#ffd54f" stroke="#c17900" stroke-width="1"/>
+        <path d="M161 81 q-8 -2 -10 -8 q8 2 12 4 z" fill="#f9a825"/>
+        <path d="M239 81 q8 -2 10 -8 q-8 2 -12 4 z" fill="#f9a825"/>
+      </g>
+
+      <!-- ===== 城楼上的小红旗（装饰） ===== -->
+      <g id="roofFlags">
+        <g>
+          <line x1="108" y1="179" x2="108" y2="159" stroke="#a1887f" stroke-width="1.4"/>
+          <path d="M108 159 L123 163 L108 167 Z" fill="#ff5252" stroke="#ffe082" stroke-width=".9"/>
+        </g>
+        <g>
+          <line x1="140" y1="179" x2="140" y2="159" stroke="#a1887f" stroke-width="1.4"/>
+          <path d="M140 159 L155 163 L140 167 Z" fill="#ff5252" stroke="#ffe082" stroke-width=".9"/>
+        </g>
+        <g>
+          <line x1="172" y1="179" x2="172" y2="159" stroke="#a1887f" stroke-width="1.4"/>
+          <path d="M172 159 L187 163 L172 167 Z" fill="#ff5252" stroke="#ffe082" stroke-width=".9"/>
+        </g>
+        <g>
+          <line x1="228" y1="179" x2="228" y2="159" stroke="#a1887f" stroke-width="1.4"/>
+          <path d="M228 159 L243 163 L228 167 Z" fill="#ff5252" stroke="#ffe082" stroke-width=".9"/>
+        </g>
+        <g>
+          <line x1="260" y1="179" x2="260" y2="159" stroke="#a1887f" stroke-width="1.4"/>
+          <path d="M260 159 L275 163 L260 167 Z" fill="#ff5252" stroke="#ffe082" stroke-width=".9"/>
+        </g>
+        <g>
+          <line x1="292" y1="179" x2="292" y2="159" stroke="#a1887f" stroke-width="1.4"/>
+          <path d="M292 159 L307 163 L292 167 Z" fill="#ff5252" stroke="#ffe082" stroke-width=".9"/>
+        </g>
+      </g>
+
+      <!-- ===== 广场地面 ===== -->
+      <rect x="0" y="302" width="400" height="128" fill="url(#groundGrad)"/>
+      <rect x="0" y="302" width="400" height="4" fill="#e8bd72"/>
+      <g stroke="#e8c98a" stroke-width="1" opacity=".7" fill="none">
+        <path d="M18 332 H382"/>
+        <path d="M40 362 H360"/>
+        <path d="M62 392 H338"/>
+      </g>
+
+      <!-- ===== 花坛 ===== -->
+      <g id="flowers">
+        <ellipse cx="44" cy="418" rx="54" ry="12" fill="#43a047" opacity=".9"/>
+        <g fill="#ff7043">
+          <circle cx="12" cy="413" r="4.4"/><circle cx="40" cy="409" r="4.4"/>
+          <circle cx="68" cy="414" r="4.4"/><circle cx="90" cy="411" r="4.4"/>
+        </g>
+        <g fill="#ffd54f">
+          <circle cx="26" cy="421" r="3.6"/><circle cx="54" cy="417" r="3.6"/><circle cx="80" cy="421" r="3.6"/>
+        </g>
+        <ellipse cx="348" cy="418" rx="50" ry="12" fill="#43a047" opacity=".9"/>
+        <g fill="#ff7043">
+          <circle cx="314" cy="413" r="4.4"/><circle cx="342" cy="409" r="4.4"/>
+          <circle cx="370" cy="414" r="4.4"/><circle cx="390" cy="411" r="4.4"/>
+        </g>
+        <g fill="#ffd54f">
+          <circle cx="328" cy="421" r="3.6"/><circle cx="356" cy="417" r="3.6"/><circle cx="382" cy="421" r="3.6"/>
+        </g>
+      </g>
+
+      <!-- ===== 五星红旗（步骤 1 热点） ===== -->
+      <g id="flag">
+        <rect x="43" y="414" width="18" height="14" rx="4" fill="#f0d9a8" stroke="#cbb98f" stroke-width="1"/>
+        <rect x="49" y="196" width="6" height="220" rx="3" fill="#efe6d2" stroke="#cbb98f" stroke-width="1"/>
+        <circle cx="52" cy="201" r="5.5" fill="#ffd54f" stroke="#c17900" stroke-width="1"/>
+        <g class="cloth">
+          <path d="M58 202 L124 206 L124 246 L58 242 Z" fill="#e53935" stroke="#b71c1c" stroke-width="1.2"/>
+          <path d="M73 210 l3.1 6.4 7 .9 -5.1 4.9 1.3 7 -6.3 -3.4 -6.3 3.4 1.3 -7 -5.1 -4.9 7 -.9 z" fill="#ffd54f"/>
+          <g fill="#ffd54f">
+            <circle cx="90" cy="210" r="2.6"/><circle cx="97" cy="218" r="2.6"/>
+            <circle cx="97" cy="230" r="2.6"/><circle cx="90" cy="238" r="2.6"/>
+          </g>
+        </g>
+        <rect class="hotring" x="34" y="188" width="104" height="86" rx="20"/>
+      </g>
+
+      <!-- ===== 气球（步骤 3 热点） ===== -->
+      <g id="balloon">
+        <g class="balpos" transform="translate(318,262)">
+          <g class="bal">
+            <path d="M0 34 Q12 66 4 96" stroke="#f5e6c8" stroke-width="1.3" fill="none"/>
+            <path d="M-2.6 16 l-3.4 5 h6.8 z" fill="#e53935"/>
+            <ellipse cx="0" cy="0" rx="13" ry="16.5" fill="#e53935"/>
+            <ellipse cx="-4" cy="-5" rx="3.2" ry="4.6" fill="#fff" opacity=".45"/>
+          </g>
+        </g>
+        <g class="balpos" transform="translate(344,244)">
+          <g class="bal">
+            <path d="M0 34 Q-8 62 -14 96" stroke="#f5e6c8" stroke-width="1.3" fill="none"/>
+            <path d="M-2.6 16 l-3.4 5 h6.8 z" fill="#ffca28"/>
+            <ellipse cx="0" cy="0" rx="12.5" ry="16" fill="#ffca28"/>
+            <ellipse cx="-4" cy="-5" rx="3" ry="4.4" fill="#fff" opacity=".5"/>
+          </g>
+        </g>
+        <g class="balpos" transform="translate(368,272)">
+          <g class="bal">
+            <path d="M0 32 Q-10 54 -24 84" stroke="#f5e6c8" stroke-width="1.3" fill="none"/>
+            <path d="M-2.4 15 l-3.2 4.6 h6.4 z" fill="#fffde7"/>
+            <ellipse cx="0" cy="0" rx="12" ry="15.5" fill="#fffde7"/>
+            <ellipse cx="-3.8" cy="-5" rx="3" ry="4.4" fill="#fff" opacity=".9"/>
+          </g>
+        </g>
+        <g class="balpos" transform="translate(332,292)">
+          <g class="bal">
+            <path d="M0 32 Q6 54 -2 76" stroke="#f5e6c8" stroke-width="1.3" fill="none"/>
+            <path d="M-2.4 15 l-3.2 4.6 h6.4 z" fill="#ff8a80"/>
+            <ellipse cx="0" cy="0" rx="11.5" ry="15" fill="#ff8a80"/>
+            <ellipse cx="-3.6" cy="-4.6" rx="2.8" ry="4.2" fill="#fff" opacity=".45"/>
+          </g>
+        </g>
+        <rect class="hotring" x="296" y="224" width="96" height="92" rx="24"/>
+      </g>
+
+      <!-- ===== 和平鸽（步骤 4 热点） ===== -->
+      <g id="dove">
+        <g class="bird" transform="translate(196,58) rotate(-8)">
+          <g class="flap">
+          <ellipse cx="0" cy="0" rx="10" ry="5" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M-2 -2 Q-9 -15 -20 -13 Q-11 -8 -6 -2 Z" fill="#f7f7f7" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M-2 2 Q-11 13 -22 11 Q-13 7 -6 2 Z" fill="#f7f7f7" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M-10 0 l-9 -4 v9 z" fill="#eceff1"/>
+          <circle cx="10" cy="-3" r="4.2" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M14 -3 l6 1.4 -6 2 z" fill="#ffb300"/>
+          <circle cx="11" cy="-4" r=".9" fill="#455a64"/>
+          </g>
+        </g>
+        <g class="bird" transform="translate(232,36) rotate(-12)">
+          <g class="flap">
+          <ellipse cx="0" cy="0" rx="9" ry="4.6" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M-2 -2 Q-8 -14 -18 -12 Q-10 -7 -6 -2 Z" fill="#f7f7f7" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M-2 2 Q-10 12 -20 10 Q-12 6 -6 2 Z" fill="#f7f7f7" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M-9 0 l-8 -4 v9 z" fill="#eceff1"/>
+          <circle cx="9" cy="-3" r="3.9" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M13 -3 l5.5 1.3 -5.5 1.9 z" fill="#ffb300"/>
+          <circle cx="10" cy="-4" r=".85" fill="#455a64"/>
+          </g>
+        </g>
+        <g class="bird" transform="translate(266,68) rotate(-4)">
+          <g class="flap">
+          <ellipse cx="0" cy="0" rx="9.4" ry="4.8" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M-2 -2 Q-8.5 -14 -19 -12.5 Q-10.5 -7.5 -6 -2 Z" fill="#f7f7f7" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M-2 2 Q-10.5 12.5 -21 10.5 Q-12.5 6.5 -6 2 Z" fill="#f7f7f7" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M-9.5 0 l-8.5 -4 v9 z" fill="#eceff1"/>
+          <circle cx="9.5" cy="-3" r="4" fill="#fff" stroke="#e0e0e0" stroke-width=".8"/>
+          <path d="M13.5 -3 l5.6 1.3 -5.6 1.9 z" fill="#ffb300"/>
+          <circle cx="10.5" cy="-4" r=".85" fill="#455a64"/>
+          </g>
+        </g>
+        <rect class="hotring" x="172" y="22" width="118" height="70" rx="28"/>
+      </g>
+
+      <!-- ===== 生日蛋糕（步骤 5 热点） ===== -->
+      <g id="birthday">
+        <g id="cakeGlow" class="fade">
+          <circle cx="200" cy="368" r="68" fill="url(#cakeGlowGrad)"/>
+        </g>
+        <ellipse cx="200" cy="404" rx="48" ry="10" fill="#fff3d4" stroke="#e0c98a" stroke-width="1.4"/>
+        <rect x="158" y="376" width="84" height="28" rx="7" fill="#fffdf5" stroke="#e0c98a" stroke-width="1.4"/>
+        <ellipse cx="200" cy="376" rx="42" ry="11" fill="#fff8e6" stroke="#e0c98a" stroke-width="1.4"/>
+        <rect x="158" y="384" width="84" height="7" fill="#e53935" opacity=".85"/>
+        <g fill="#ffd54f">
+          <circle cx="176" cy="387.5" r="2.2"/><circle cx="200" cy="387.5" r="2.2"/><circle cx="224" cy="387.5" r="2.2"/>
+        </g>
+        <g fill="#fff8e6" stroke="#e0c98a" stroke-width="1">
+          <rect x="176" y="350" width="6" height="26" rx="3"/>
+          <rect x="197" y="345" width="6" height="31" rx="3"/>
+          <rect x="218" y="350" width="6" height="26" rx="3"/>
+        </g>
+        <g fill="#e53935">
+          <rect x="176" y="350" width="6" height="8" rx="3"/>
+          <rect x="197" y="345" width="6" height="8" rx="3"/>
+          <rect x="218" y="350" width="6" height="8" rx="3"/>
+        </g>
+        <g id="cakeFlame" class="fade">
+          <ellipse class="flame" cx="179" cy="344" rx="3.4" ry="6.4" fill="#ffb300"/>
+          <ellipse class="flame" cx="200" cy="339" rx="3.4" ry="6.4" fill="#ffb300"/>
+          <ellipse class="flame" cx="221" cy="344" rx="3.4" ry="6.4" fill="#ffb300"/>
+          <ellipse class="flame" cx="179" cy="345" rx="1.6" ry="3.4" fill="#fff59d"/>
+          <ellipse class="flame" cx="200" cy="340" rx="1.6" ry="3.4" fill="#fff59d"/>
+          <ellipse class="flame" cx="221" cy="345" rx="1.6" ry="3.4" fill="#fff59d"/>
+        </g>
+        <path d="M200 388 l2.2 4.5 4.9 .6 -3.6 3.4 .9 4.9 -4.4 -2.4 -4.4 2.4 .9 -4.9 -3.6 -3.4 4.9 -.6 z" fill="#ffd54f" stroke="#c17900" stroke-width=".8"/>
+        <rect class="hotring" x="150" y="334" width="100" height="84" rx="20"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="hint-bar" id="hintBar">👇 点一闪一闪的地方，跟着剧情一起说英语吧</div>
+
+  <!-- 开始面板 -->
+  <div class="overlay" id="startOverlay">
+    <div class="panel">
+      <div class="big-emoji swing" id="startIcon">🎈</div>
+      <h1>National Day!</h1>
+      <div class="sub">国庆节 · 英语启蒙小游戏</div>
+      <div class="item-row">
+        <svg viewBox="0 0 48 48" style="width:1em;height:1em;vertical-align:-0.08em">
+          <rect x="9" y="4" width="3" height="40" rx="1.5" fill="#cfc4a6"/>
+          <circle cx="10.5" cy="7" r="3" fill="#ffd54f"/>
+          <path d="M12 8 L44 10 L44 30 L12 28 Z" fill="#e53935" stroke="#b71c1c" stroke-width="1.4"/>
+          <path d="M19 13 l1.9 3.9 4.3 .6 -3.1 3 .7 4.3 -3.8 -2 -3.8 2 .7 -4.3 -3.1 -3 4.3 -.6 z" fill="#ffd54f"/>
+          <circle cx="30" cy="13.5" r="1.7" fill="#ffd54f"/>
+          <circle cx="34" cy="18" r="1.7" fill="#ffd54f"/>
+          <circle cx="33" cy="24" r="1.7" fill="#ffd54f"/>
+          <circle cx="28" cy="27.5" r="1.7" fill="#ffd54f"/>
+        </svg>
+        🎈
+        <svg viewBox="0 0 48 48" style="width:1em;height:1em;vertical-align:-0.08em">
+          <g stroke-linecap="round" fill="none">
+            <g stroke="#ffca28" stroke-width="2.4">
+              <path d="M24 24 L24 8"/><path d="M24 24 L24 40"/><path d="M24 24 L8 24"/><path d="M24 24 L40 24"/>
+            </g>
+            <g stroke="#ff7043" stroke-width="2.2">
+              <path d="M24 24 L13 13"/><path d="M24 24 L35 13"/><path d="M24 24 L13 35"/><path d="M24 24 L35 35"/>
+            </g>
+          </g>
+          <circle cx="24" cy="24" r="3.4" fill="#fff59d"/>
+          <g fill="#ffe082">
+            <circle cx="24" cy="6" r="1.8"/><circle cx="24" cy="42" r="1.8"/>
+            <circle cx="6" cy="24" r="1.8"/><circle cx="42" cy="24" r="1.8"/>
+            <circle cx="11" cy="11" r="1.6"/><circle cx="37" cy="11" r="1.6"/>
+            <circle cx="11" cy="37" r="1.6"/><circle cx="37" cy="37" r="1.6"/>
+          </g>
+        </svg>
+      </div>
+      <div class="intro">
+        先上一节「节日小课堂」：听国庆节的来历、给庆祝活动配配对。<br>
+        再进天安门广场升国旗、看烟花、放飞气球和和平鸽，<br>
+        最后一起祝祖国妈妈生日快乐！<br>
+        <span style="color:#c62828">🔊 记得打开声音，跟着一起说英语哦！</span>
+      </div>
+      <button class="btn" id="startBtn">🚀 开始 Start</button>
+    </div>
+  </div>
+
+  <!-- 单词卡 -->
+  <div class="overlay hidden" id="wordOverlay">
+    <div class="panel wordcard">
+      <div class="wc-emoji" id="wcEmoji">🎈</div>
+      <div class="wc-en" id="wcEn">Flag</div>
+      <div class="wc-phon" id="wcPhon">/flæɡ/</div>
+      <div class="wc-cn" id="wcCn">国旗</div>
+      <div class="wc-sentence" id="wcSentence">Raise the red flag high!</div>
+      <div class="wc-actions">
+        <button class="round-btn" id="wcSpeak" title="再听一遍">🔊</button>
+        <button class="btn teal" id="wcNext">下一步 Next ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 通关页 -->
+  <div class="overlay hidden" id="finishOverlay">
+    <div class="panel">
+      <div class="big-emoji swing">🎉</div>
+      <h1>Happy National Day!</h1>
+      <div class="sub">国庆节快乐 · 祝祖国妈妈生日快乐</div>
+      <div class="finish-stars"><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span><span>⭐</span></div>
+      <div class="intro">
+        Flag, fireworks, balloon, dove, birthday — <br>
+        你用英语过完了国庆节，太棒了！<br>
+        <span style="color:#c62828">今天是祖国妈妈的生日，一起说一句 "Happy birthday, China!" 吧！</span>
+      </div>
+      <button class="btn" id="replayBtn">🔄 再玩一次 Play Again</button>
+    </div>
+  </div>
+
+  <!-- 节日小课堂：玩法前置热身（① 来历点读 ② 庆祝活动配对 ③ 小问答） -->
+  <div class="overlay hidden classroom-layer" id="clsOverlay">
+    <div class="panel classroom">
+      <div class="cls-title" id="clsTitle">① 国庆节的来历 · Story</div>
+      <div class="cls-dots" id="clsDots"></div>
+      <div class="cls-body" id="clsBody"></div>
+      <div class="cls-tip" id="clsTip"></div>
+      <div class="wc-actions cls-actions">
+        <button class="round-btn" id="clsSpeak" title="再听一遍">🔊</button>
+        <button class="btn teal" id="clsNext" disabled>继续 ▶</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 与卡片/面板大图标：一律用内联 SVG，避免新版 emoji 在 Windows 10 上变豆腐块
+  const FLAG_SVG = '<svg viewBox="0 0 48 48"><rect x="9" y="4" width="3" height="40" rx="1.5" fill="#cfc4a6"/><circle cx="10.5" cy="7" r="3" fill="#ffd54f"/><path d="M12 8 L44 10 L44 30 L12 28 Z" fill="#e53935" stroke="#b71c1c" stroke-width="1.4"/><path d="M19 13 l1.9 3.9 4.3 .6 -3.1 3 .7 4.3 -3.8 -2 -3.8 2 .7 -4.3 -3.1 -3 4.3 -.6 z" fill="#ffd54f"/><circle cx="30" cy="13.5" r="1.7" fill="#ffd54f"/><circle cx="34" cy="18" r="1.7" fill="#ffd54f"/><circle cx="33" cy="24" r="1.7" fill="#ffd54f"/><circle cx="28" cy="27.5" r="1.7" fill="#ffd54f"/></svg>';
+  const FIREWORK_SVG = '<svg viewBox="0 0 48 48"><g stroke-linecap="round" fill="none"><g stroke="#ffca28" stroke-width="2.4"><path d="M24 24 L24 8"/><path d="M24 24 L24 40"/><path d="M24 24 L8 24"/><path d="M24 24 L40 24"/></g><g stroke="#ff7043" stroke-width="2.2"><path d="M24 24 L13 13"/><path d="M24 24 L35 13"/><path d="M24 24 L13 35"/><path d="M24 24 L35 35"/></g></g><circle cx="24" cy="24" r="3.4" fill="#fff59d"/><g fill="#ffe082"><circle cx="24" cy="6" r="1.8"/><circle cx="24" cy="42" r="1.8"/><circle cx="6" cy="24" r="1.8"/><circle cx="42" cy="24" r="1.8"/><circle cx="11" cy="11" r="1.6"/><circle cx="37" cy="11" r="1.6"/><circle cx="11" cy="37" r="1.6"/><circle cx="37" cy="37" r="1.6"/></g></svg>';
+  const DOVE_SVG = '<svg viewBox="0 0 48 48"><ellipse cx="24" cy="27" rx="11" ry="5.5" fill="#fff" stroke="#e0e0e0" stroke-width="1"/><path d="M21 25 Q16 12 5 14 Q14 19 18 26 Z" fill="#f7f7f7" stroke="#e0e0e0" stroke-width="1"/><path d="M21 29 Q15 39 4 37 Q13 33 18 28 Z" fill="#f7f7f7" stroke="#e0e0e0" stroke-width="1"/><path d="M13 27 l-8 -4 v9 z" fill="#eceff1"/><circle cx="34" cy="24" r="4.4" fill="#fff" stroke="#e0e0e0" stroke-width="1"/><path d="M38 24 l6 1.4 -6 2 z" fill="#ffb300"/><circle cx="34.8" cy="23" r="1" fill="#455a64"/></svg>';
+  const CAKE_SVG = '<svg viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="17" ry="3.4" fill="#f3e3c3"/><rect x="8" y="28" width="32" height="13" rx="4" fill="#fffdf5" stroke="#e0c98a" stroke-width="1.4"/><rect x="8" y="33" width="32" height="5" fill="#e53935" opacity=".9"/><ellipse cx="24" cy="28" rx="16" ry="4.6" fill="#fff8e6" stroke="#e0c98a" stroke-width="1.4"/><g fill="#ffca28" stroke="#e0a800" stroke-width="1"><rect x="15" y="16" width="4" height="11" rx="2"/><rect x="22" y="14" width="4" height="13" rx="2"/><rect x="29" y="16" width="4" height="11" rx="2"/></g><g fill="#ffb300"><ellipse cx="17" cy="13" rx="2.4" ry="4"/><ellipse cx="24" cy="11" rx="2.4" ry="4"/><ellipse cx="31" cy="13" rx="2.4" ry="4"/></g><g fill="#fff59d"><ellipse cx="17" cy="13.6" rx="1.1" ry="2"/><ellipse cx="24" cy="11.6" rx="1.1" ry="2"/><ellipse cx="31" cy="13.6" rx="1.1" ry="2"/></g></svg>';
+  // 小课堂插图：尺寸交给 CSS（.cls-ill / .cls-tile 内的 svg 规则），这里不写行内尺寸
+  const FOUNDING_SVG = '<svg viewBox="0 0 48 48"><line x1="14" y1="14" x2="14" y2="26" stroke="#8d6e63" stroke-width="1.6"/><path d="M15 15 L27 16.6 L27 21.4 L15 19.8 Z" fill="#e53935"/><path d="M18 16.4 l1 2 2.2 .3 -1.6 1.5 .4 2.2 -2 -1 -2 1 .4 -2.2 -1.6 -1.5 2.2 -.3 z" fill="#ffd54f"/><rect x="6" y="30" width="36" height="14" rx="2" fill="#c62828" stroke="#8e0000" stroke-width="1.2"/><path d="M3 30 L24 19 L45 30 Z" fill="#f9a825" stroke="#c17900" stroke-width="1.2"/><rect x="15" y="34" width="7" height="10" rx="3" fill="#5d1a1a"/><rect x="26" y="34" width="7" height="10" rx="3" fill="#5d1a1a"/><circle cx="24" cy="26" r="3.4" fill="#ffd54f"/></svg>';
+  const CALENDAR_SVG = '<svg viewBox="0 0 48 48"><rect x="7" y="10" width="34" height="32" rx="5" fill="#fff" stroke="#e53935" stroke-width="2"/><path d="M7 15 a5 5 0 0 1 5 -5 h24 a5 5 0 0 1 5 5 v5 h-34 z" fill="#e53935"/><rect x="14" y="5" width="4" height="8" rx="2" fill="#b71c1c"/><rect x="30" y="5" width="4" height="8" rx="2" fill="#b71c1c"/><text x="24" y="37" font-size="15" font-weight="bold" text-anchor="middle" fill="#c62828">10.1</text></svg>';
+  const HEART_SVG = '<svg viewBox="0 0 48 48"><path d="M24 41 C6 28 6 15 14 11 C19 8.5 23 12 24 15 C25 12 29 8.5 34 11 C42 15 42 28 24 41 Z" fill="#ff6b8a"/><path d="M24 18 l1.5 3 3.3 .5 -2.4 2.3 .6 3.3 -3 -1.6 -3 1.6 .6 -3.3 -2.4 -2.3 3.3 -.5 z" fill="#ffd54f"/></svg>';
+  const CUS_FLAG_SVG = '<svg viewBox="0 0 48 48"><rect x="11" y="6" width="3.4" height="38" rx="1.6" fill="#cfc4a6"/><path d="M14.4 9 L42 11 L42 23 L14.4 21 Z" fill="#e53935" stroke="#b71c1c" stroke-width="1.2"/><path d="M20 13 l1.1 2.3 2.5 .3 -1.8 1.8 .4 2.5 -2.2 -1.2 -2.2 1.2 .4 -2.5 -1.8 -1.8 2.5 -.3 z" fill="#ffd54f"/><circle cx="31" cy="13" r="1.2" fill="#ffd54f"/><circle cx="34.5" cy="16" r="1.2" fill="#ffd54f"/><circle cx="34" cy="20" r="1.2" fill="#ffd54f"/><circle cx="30.5" cy="22" r="1.2" fill="#ffd54f"/></svg>';
+  const CUS_SONG_SVG = '<svg viewBox="0 0 48 48"><path d="M20 34 V12 l18 -3 v20" fill="none" stroke="#c62828" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="15" cy="35" rx="6" ry="4.6" fill="#e53935"/><ellipse cx="33" cy="30" rx="6" ry="4.6" fill="#e53935"/><path d="M40 20 l1.6 3.4 3.6 .4 -2.7 2.5 .7 3.6 -3.2 -1.8 -3.2 1.8 .7 -3.6 -2.7 -2.5 3.6 -.4 z" fill="#ffca28"/></svg>';
+  const CUS_FIREWORK_SVG = '<svg viewBox="0 0 48 48"><g stroke-linecap="round" fill="none"><g stroke="#ffca28" stroke-width="2.2"><path d="M24 25 L24 10"/><path d="M24 25 L11 16"/><path d="M24 25 L37 16"/></g><g stroke="#ff7043" stroke-width="2"><path d="M24 25 L9 25"/><path d="M24 25 L39 25"/><path d="M24 25 L13 36"/><path d="M24 25 L35 36"/></g></g><circle cx="24" cy="25" r="3" fill="#fff59d"/><path d="M24 32 v10" stroke="#8d6e63" stroke-width="2.4" stroke-linecap="round"/><g fill="#ffe082"><circle cx="24" cy="8" r="1.6"/><circle cx="9" cy="14" r="1.5"/><circle cx="39" cy="14" r="1.5"/><circle cx="6" cy="25" r="1.5"/><circle cx="42" cy="25" r="1.5"/><circle cx="11" cy="38" r="1.5"/><circle cx="37" cy="38" r="1.5"/></g></svg>';
+  const CUS_TRIP_SVG = '<svg viewBox="0 0 48 48"><circle cx="36" cy="12" r="7" fill="#ffca28"/><rect x="7" y="20" width="34" height="22" rx="5" fill="#e53935" stroke="#b71c1c" stroke-width="1.6"/><rect x="12" y="15" width="24" height="6" rx="3" fill="none" stroke="#b71c1c" stroke-width="2.4"/><path d="M7 30 h34" stroke="#ffd54f" stroke-width="2.2"/><line x1="24" y1="20" x2="24" y2="42" stroke="#c62828" stroke-width="1.6"/><path d="M9 40 q6 3 12 0 t12 0 t8 0" stroke="#fffde7" stroke-width="2" fill="none" opacity=".6"/></svg>';
+
+  document.getElementById('startIcon').innerHTML = FLAG_SVG;
+
+  const INTRO_LINE = "It's October 1st, our National Day! Let's celebrate together!";
+  const FINISH_LINE = 'Happy birthday, China! We love you!';
+
+  const STEPS = [
+    {
+      hot: 'flag', emoji: FLAG_SVG,
+      en: 'Flag', phon: '/flæɡ/', cn: '国旗',
+      sentence: 'Raise the red flag high!',
+      instruction: 'Look at the red flag!',
+      cnCn: '点一点红旗，五星红旗升起来啦'
+    },
+    {
+      hot: 'fireworks', emoji: FIREWORK_SVG,
+      en: 'Fireworks', phon: '/ˈfaɪəwɜːks/', cn: '烟花',
+      sentence: 'Wow, the fireworks are beautiful!',
+      instruction: 'Look at the fireworks!',
+      cnCn: '点一点天空，看烟花绽放'
+    },
+    {
+      hot: 'balloon', emoji: '🎈',
+      en: 'Balloon', phon: '/bəˈluːn/', cn: '气球',
+      sentence: "Let's hold the red balloons!",
+      instruction: 'Hold the balloons!',
+      cnCn: '点一点气球，让气球飞起来'
+    },
+    {
+      hot: 'dove', emoji: DOVE_SVG,
+      en: 'Dove', phon: '/dʌv/', cn: '和平鸽',
+      sentence: 'The doves fly in the sky!',
+      instruction: 'Look at the doves!',
+      cnCn: '点一点和平鸽，它们飞向蓝天'
+    },
+    {
+      hot: 'birthday', emoji: CAKE_SVG,
+      en: 'Birthday', phon: '/ˈbɜːθdeɪ/', cn: '生日',
+      sentence: 'Happy birthday, China!',
+      instruction: "It's China's birthday today!",
+      cnCn: '点一点蛋糕，祝祖国妈妈生日快乐'
+    }
+  ];
+
+  /* ================================================================
+     节日小课堂数据
+       origin  来历：3 格绘本，每格 icon 插图 + en 英文句 + cn 中文 + say 朗读句
+       customs 庆祝活动：4 组配对，icon 图（配 cn 小字）↔ en 英文标签
+       quiz    小问答：en/cn 题干 + options（一项 ok:true，其余点错只摇晃）
+  ================================================================= */
+  const KNOWLEDGE = {
+    origin: [
+      {
+        icon: FOUNDING_SVG,
+        en: 'On October 1st, 1949, New China was born.',
+        cn: '1949年10月1日，新中国在北京天安门广场成立了。',
+        say: 'On October first, nineteen forty-nine, New China was born.'
+      },
+      {
+        icon: CALENDAR_SVG,
+        en: 'October 1st is our National Day.',
+        cn: '从那以后，每年的10月1日就是国庆节。',
+        say: 'So every year, October first is our National Day.'
+      },
+      {
+        icon: HEART_SVG,
+        en: 'It is a big birthday for our country.',
+        cn: '国庆节是全国人民一起为祖国妈妈过生日的日子，大家唱歌、跳舞、放烟花，到处喜气洋洋。',
+        say: 'It is a big birthday party for our country. We sing, dance and say: Happy birthday, China!'
+      }
+    ],
+    customs: [
+      { id: 'raise', icon: CUS_FLAG_SVG,      cn: '升国旗',   en: 'raise the flag' },
+      { id: 'sing',  icon: CUS_SONG_SVG,      cn: '唱国歌',   en: 'sing the national anthem' },
+      { id: 'watch', icon: CUS_FIREWORK_SVG,  cn: '看烟花',   en: 'watch the fireworks' },
+      { id: 'trip',  icon: CUS_TRIP_SVG,      cn: '放假去旅行', en: 'go on a holiday trip' }
+    ],
+    quiz: {
+      en: "When is China's National Day?",
+      cn: '哪一天是国庆节？',
+      options: [
+        { id: 'a', en: 'October 1st', cn: '10月1日', ok: true,
+          say: 'October first! Yes, that is our National Day.' },
+        { id: 'b', en: 'January 1st', cn: '1月1日', ok: false,
+          say: 'January first is New Year! Try again.' },
+        { id: 'c', en: 'August 15th', cn: '8月15日', ok: false,
+          say: 'August fifteenth is the Mid-Autumn Festival. Try again!' }
+      ]
+    }
+  };
+
+  const $ = id => document.getElementById(id);
+  let stepIndex = 0, started = false, introDone = false;
+
+  /* 节日小课堂状态（重玩时由 openClassroom 全部复位） */
+  let clsPhase = 0;          // 0 来历 / 1 庆祝活动 / 2 小问答
+  let clsOriginRead = [];    // 已点读的来历格序号
+  let clsMatched = [];       // 已配对的庆祝活动 id
+  let clsSel = null;         // 配对时选中的图标 id
+  let clsTagOrder = [];      // 标签顺序：进入配对环节时洗一次牌，避免每次渲染都重排
+  let clsQuizOk = false;
+  let clsActive = false;     // 小课堂进行中：此时场景热点不可点
+  let clsSay = '';           // 当前可重播的英文句
+
+  /* ---------- 语音 ---------- */
+  let enVoice = null;
+  let _voiceRetries = 0;
+  function loadVoices() {
+    const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    if (voices.length === 0 && _voiceRetries < 8) {
+      _voiceRetries++;
+      setTimeout(loadVoices, 400);
+      return;
+    }
+    enVoice =
+      voices.find(v => /en[-_]US/i.test(v.lang) && /female|samantha|zira|aria|jenny|google/i.test(v.name)) ||
+      voices.find(v => /en[-_]US/i.test(v.lang)) ||
+      voices.find(v => /^en/i.test(v.lang)) ||
+      voices.find(v => /en/i.test(v.name)) || null;
+  }
+  if ('speechSynthesis' in window) { loadVoices(); window.speechSynthesis.onvoiceschanged = loadVoices; }
+  function speak(text, rate = 0.9, keepQueue = false, onEnd) {
+    if (!('speechSynthesis' in window)) { if (onEnd) setTimeout(onEnd, 300); return; }
+    const fire = () => {
+      const u = new SpeechSynthesisUtterance(text);
+      if (enVoice) { u.voice = enVoice; u.lang = enVoice.lang; } else { u.lang = 'en-US'; }
+      u.rate = rate; u.pitch = 1.15;
+      if (onEnd) u.onend = onEnd;
+      window.speechSynthesis.speak(u);
+    };
+    if (keepQueue) { fire(); return; }
+    window.speechSynthesis.cancel();
+    setTimeout(fire, 80);
+  }
+  function speakQueued(text, rate) {
+    if (!('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text);
+    if (enVoice) { u.voice = enVoice; u.lang = enVoice.lang; } else { u.lang = 'en-US'; }
+    u.rate = rate || .92; u.pitch = 1.15;
+    window.speechSynthesis.speak(u);
+  }
+
+  /* ---------- 音效 ---------- */
+  let audioCtx = null;
+  function ensureAudio() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    } catch (e) {}
+  }
+  function tone(freq, delay, dur, type, vol) {
+    if (!audioCtx) return;
+    const t0 = audioCtx.currentTime + delay;
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = type || 'triangle';
+    osc.frequency.setValueAtTime(freq, t0);
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(vol || 0.12, t0 + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(t0); osc.stop(t0 + dur + 0.02);
+  }
+  const sfx = {
+    pop() { tone(440, 0, .1, 'triangle', .12); },
+    chime() { [880, 1174.66, 1567.98].forEach((f, i) => tone(f, i * .1, .5, 'sine', .09)); },
+    boom() { tone(150, 0, .3, 'sine', .14); [660, 880, 1174.66, 1567.98].forEach((f, i) => tone(f, .04 + i * .06, .26, 'triangle', .07)); },
+    open() { tone(520, 0, .1, 'triangle', .1); tone(784, .08, .16, 'sine', .09); },
+    success() { [523.25, 659.25, 783.99].forEach((f, i) => tone(f, i * .09, .14, 'triangle', .13)); },
+    fanfare() { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, i * .13, i === 3 ? .4 : .16, 'triangle', .14)); }
+  };
+
+  /* ---------- 星星 ---------- */
+  function initStars() {
+    const box = $('stars'); box.innerHTML = '';
+    STEPS.forEach((_, i) => {
+      const s = document.createElement('div');
+      s.className = 'star-slot'; s.id = 'star-' + i;
+      box.appendChild(s);
+    });
+  }
+
+  /* ---------- 场景辅助 ---------- */
+  const HOT_IDS = ['flag', 'fireworks', 'balloon', 'dove', 'birthday'];
+  function clearHot() {
+    HOT_IDS.forEach(id => $(id).classList.remove('hot'));
+  }
+  function spawnSparkles(target) {
+    const host = target || $('stage'), rect = host.getBoundingClientRect();
+    const emojis = ['✨', '⭐', '💫', '🌟'];
+    for (let i = 0; i < 7; i++) {
+      const s = document.createElement('span');
+      s.className = 'sparkle';
+      s.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      s.style.left = (rect.width * 0.25 + Math.random() * rect.width * 0.5) + 'px';
+      s.style.top = (rect.height * 0.2 + Math.random() * rect.height * 0.55) + 'px';
+      s.style.animationDelay = (Math.random() * .25) + 's';
+      host.appendChild(s);
+      setTimeout(() => s.remove(), 1400);
+    }
+  }
+
+  /* ---------- 流程 ---------- */
+  function startStep(i) {
+    const st = STEPS[i];
+    $('bubbleEn').textContent = st.instruction;
+    $('bubbleCn').textContent = st.cnCn;
+    clearHot();
+    $(st.hot).classList.add('hot');
+    setTimeout(() => speak(st.instruction, .9, i === 0), 350);
+  }
+
+  function showWordCard(st) {
+    $('wcEmoji').innerHTML = st.emoji;
+    $('wcEn').textContent = st.en;
+    $('wcPhon').textContent = st.phon;
+    $('wcCn').textContent = st.cn;
+    $('wcSentence').textContent = st.sentence;
+    $('wordOverlay').classList.remove('hidden');
+    speak(st.en, .72);
+    setTimeout(() => speak(st.sentence, .92, true), 900);
+  }
+
+  function onHotClick(id) {
+    if (!started || clsActive) return;
+    if (!$('wordOverlay').classList.contains('hidden')) return;
+    if (stepIndex >= STEPS.length) return;
+    if (id !== STEPS[stepIndex].hot) return;
+
+    const slot = $('star-' + stepIndex);
+    slot.classList.add('earned'); slot.textContent = '⭐';
+    spawnSparkles();
+
+    if (id === 'flag') {
+      $('flag').classList.add('wave');
+      sfx.chime();
+    } else if (id === 'fireworks') {
+      $('fwBurst').classList.add('on');
+      sfx.boom();
+    } else if (id === 'balloon') {
+      $('balloon').classList.add('rise');
+      sfx.open(); sfx.pop();
+    } else if (id === 'dove') {
+      $('dove').classList.add('fly');
+      sfx.chime();
+    } else if (id === 'birthday') {
+      $('cakeFlame').classList.add('on');
+      $('cakeGlow').classList.add('on');
+      document.body.classList.add('celebrating');
+      sfx.fanfare();
+    }
+    clearHot();
+    const st = STEPS[stepIndex];
+    setTimeout(() => showWordCard(st), 800);
+  }
+
+  function nextStep() {
+    $('wordOverlay').classList.add('hidden');
+    stepIndex++;
+    if (stepIndex >= STEPS.length) finishGame();
+    else startStep(stepIndex);
+  }
+
+  function confetti() {
+    const colors = ['#c62828', '#e53935', '#ffca28', '#fffde7', '#ff8a65', '#f9a825', '#ffd54f'];
+    const ov = $('finishOverlay');
+    ov.querySelectorAll('.confetti-piece').forEach(p => p.remove());
+    for (let i = 0; i < 70; i++) {
+      const p = document.createElement('span');
+      p.className = 'confetti-piece';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.animationDuration = (2.4 + Math.random() * 2.2) + 's';
+      p.style.animationDelay = (Math.random() * 1.2) + 's';
+      ov.appendChild(p);
+    }
+  }
+
+  function finishGame() {
+    sfx.fanfare();
+    document.body.classList.add('celebrating');
+    spawnSparkles();
+    setTimeout(spawnSparkles, 500);
+    setTimeout(() => {
+      $('finishOverlay').classList.remove('hidden');
+      confetti();
+      speak(FINISH_LINE, .92);
+    }, 1100);
+  }
+
+  /* ================================================================
+     节日小课堂 —— 玩法前置知识热身
+     ① 来历点读（3 格听完）→ ② 庆祝活动配对（4 组配完）→ ③ 小问答答对
+     → 关闭小课堂，播开场白，进入原来的 5 步玩法
+  ================================================================= */
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  function setBubble(en, cn) {
+    $('bubbleEn').textContent = en;
+    $('bubbleCn').textContent = cn;
+  }
+  function clsSpeak(text, rate) {   // 小课堂内的朗读统一走这里，便于 🔊 重播
+    clsSay = text;
+    speak(text, rate || .88);
+  }
+  function clsShake(el) {           // 点错只摇晃一下，晃完恢复原样（不留下负面标记）
+    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong');
+    setTimeout(() => el.classList.remove('wrong'), 450);
+  }
+
+  function openClassroom() {
+    clsPhase = 0; clsOriginRead = []; clsMatched = []; clsSel = null;
+    clsTagOrder = []; clsQuizOk = false; clsSay = ''; clsActive = true;
+    started = false;                                  // 玩法尚未开始，热点不可点
+    $('startOverlay').classList.add('hidden');
+    $('clsOverlay').classList.remove('hidden');
+    renderClassroom();
+  }
+
+  function renderClassroom() {
+    const K = KNOWLEDGE, body = $('clsBody');
+    $('clsDots').innerHTML = [0, 1, 2].map(i => `<div class="cls-dot${i === clsPhase ? ' on' : ''}"></div>`).join('');
+
+    if (clsPhase === 0) {
+      $('clsTitle').textContent = '① 国庆节的来历 · Story';
+      body.innerHTML = '<div class="cls-origin">' + K.origin.map((o, i) =>
+        `<button class="cls-card${clsOriginRead.includes(i) ? ' read' : ''}" data-i="${i}">
+           <span class="cls-ill">${o.icon}</span>
+           <span class="cls-text"><span class="cls-en">${o.en}</span><span class="cls-cn">${o.cn}</span></span>
+           <span class="cls-read">🔊</span>
+         </button>`).join('') + '</div>';
+      setBubble('The National Day story!', '先听一听国庆节的来历');
+      setTimeout(() => clsSpeak("Let's hear the National Day story!", .9), 400);
+    } else if (clsPhase === 1) {
+      $('clsTitle').textContent = '② 国庆庆祝活动 · Celebrate';
+      if (!clsTagOrder.length) clsTagOrder = shuffle(K.customs.map(c => c.id));
+      body.innerHTML = `<div class="cls-match">
+        <div class="cls-icons">${K.customs.map(c =>
+          `<button class="cls-tile${clsMatched.includes(c.id) ? ' done' : ''}" data-id="${c.id}">${c.icon}<span class="cls-tile-cn">${c.cn}</span></button>`).join('')}</div>
+        <div class="cls-tags">${clsTagOrder.map(id =>
+          `<button class="cls-tag${clsMatched.includes(id) ? ' done' : ''}" data-id="${id}">${K.customs.find(c => c.id === id).en}</button>`).join('')}</div>
+      </div>`;
+      setBubble('How do we celebrate?', '把图片和英语配成一对');
+      setTimeout(() => clsSpeak("Let's match how we celebrate National Day!", .9), 400);
+    } else {
+      $('clsTitle').textContent = '③ 想一想 · Quiz';
+      body.innerHTML = `<div class="cls-quiz">
+        <div class="cls-question">${K.quiz.en}</div>
+        <div class="cls-question-cn">${K.quiz.cn}</div>
+        <div class="cls-options">${K.quiz.options.map(o =>
+          `<button class="cls-option" data-id="${o.id}">${o.en}<span class="cls-option-cn">${o.cn}</span></button>`).join('')}</div>
+      </div>`;
+      setBubble(K.quiz.en, '哪一天是国庆节？');
+      setTimeout(() => clsSpeak(K.quiz.en, .88), 400);
+    }
+    clsRefresh();
+  }
+
+  function clsRefresh() {
+    if (clsPhase === 0) {
+      $('clsTip').textContent = clsOriginRead.length < KNOWLEDGE.origin.length
+        ? `点一点每一格，听一听国庆节的来历（${clsOriginRead.length}/${KNOWLEDGE.origin.length}）`
+        : '三格都听完啦，点「继续」看看大家怎么庆祝国庆节';
+    } else if (clsPhase === 1) {
+      $('clsTip').textContent = clsMatched.length < KNOWLEDGE.customs.length
+        ? `先点上面的图片，再点下面一样的英语（${clsMatched.length}/${KNOWLEDGE.customs.length}）`
+        : '四组都配好啦，点「继续」做一道小问答';
+    } else {
+      $('clsTip').textContent = clsQuizOk
+        ? '答对啦！升国旗、唱国歌、看烟花、放假去旅行，都是国庆节的庆祝活动'
+        : '选一选，哪一天是国庆节？';
+    }
+    const btn = $('clsNext');
+    btn.disabled = clsPhase === 0 ? clsOriginRead.length < KNOWLEDGE.origin.length
+                 : clsPhase === 1 ? clsMatched.length < KNOWLEDGE.customs.length
+                 : !clsQuizOk;
+    btn.textContent = (clsPhase === 2 && clsQuizOk) ? '🚀 开始玩 Start' : '继续 ▶';
+  }
+
+  /* ① 点读一格来历 */
+  function clsReadOrigin(i) {
+    const o = KNOWLEDGE.origin[i];
+    document.querySelector(`.cls-card[data-i="${i}"]`).classList.add('read');
+    if (!clsOriginRead.includes(i)) { clsOriginRead.push(i); sfx.pop(); }
+    clsSpeak(o.say, .9);
+    clsRefresh();
+  }
+
+  /* ② 先选图片（听英文），再点标签配对 */
+  function clsSelectTile(id) {
+    if (clsMatched.includes(id)) return;
+    clsSel = id;
+    document.querySelectorAll('.cls-tile').forEach(t => t.classList.toggle('sel', t.dataset.id === id));
+    sfx.pop();
+    clsSpeak(KNOWLEDGE.customs.find(c => c.id === id).en, .82);
+    $('clsTip').textContent = '再点下面一样的英语，把它们配成一对';
+  }
+  function clsTapTag(el) {
+    const id = el.dataset.id;
+    if (clsMatched.includes(id)) return;
+    const c = KNOWLEDGE.customs.find(x => x.id === id);
+    if (!clsSel) {                        // 还没选图片：先听一遍并轻轻晃一下，不批评
+      clsShake(el);
+      clsSpeak(c.en, .82);
+      $('clsTip').textContent = '先点上面的图片，再点下面一样的英语哦';
+      return;
+    }
+    if (id === clsSel) {
+      clsMatched.push(id);
+      el.classList.add('done');
+      document.querySelector(`.cls-tile[data-id="${id}"]`).classList.add('done');
+      document.querySelectorAll('.cls-tile').forEach(t => t.classList.remove('sel'));
+      clsSel = null;
+      spawnSparkles($('clsOverlay')); sfx.success();
+      clsSpeak(c.en + '! Well done!', .88);
+    } else {
+      clsShake(el);
+      sfx.pop();
+      clsSpeak('Try again! Which picture is it?', .85);
+      $('clsTip').textContent = '再试一次，看看图片和英语哪个是一样的';
+      return;
+    }
+    clsRefresh();
+  }
+
+  /* ③ 小问答 */
+  function clsAnswer(el) {
+    if (clsQuizOk) return;
+    const o = KNOWLEDGE.quiz.options.find(x => x.id === el.dataset.id);
+    if (o.ok) {
+      clsQuizOk = true;
+      el.classList.add('ok');
+      spawnSparkles($('clsOverlay')); sfx.fanfare();
+      clsSpeak(o.say, .88);
+    } else {
+      clsShake(el);
+      sfx.pop();
+      clsSpeak(o.say, .88);
+      $('clsTip').textContent = '这个不是国庆节哦，再选一个试试';
+      return;
+    }
+    clsRefresh();
+  }
+
+  function closeClassroom() {
+    clsActive = false;
+    $('clsOverlay').classList.add('hidden');
+    started = true;
+    setBubble('Happy National Day!', '十月一日，天安门广场上红旗飘飘');
+    // 开场白播完后再出现第一个热点（另加 5s 兜底）
+    const beginFirstStep = () => {
+      if (introDone) return;
+      introDone = true;
+      startStep(0);
+    };
+    speak(INTRO_LINE, .92, false, beginFirstStep);
+    setTimeout(beginFirstStep, 5000);
+  }
+
+  function resetScene() {
+    clearHot();
+    ['fwBurst', 'cakeFlame', 'cakeGlow'].forEach(id => $(id).classList.remove('on'));
+    ['flag', 'balloon', 'dove'].forEach(id => $(id).classList.remove('wave', 'rise', 'fly'));
+    document.querySelectorAll('.fade').forEach(l => l.classList.remove('on'));
+    document.body.classList.remove('celebrating');
+    document.querySelectorAll('.sparkle, .confetti-piece').forEach(p => p.remove());
+  }
+
+  function startGame() {
+    ensureAudio();
+    sfx.pop();
+    stepIndex = 0; introDone = false;
+    initStars();
+    resetScene();
+    $('finishOverlay').classList.add('hidden');
+    $('wordOverlay').classList.add('hidden');
+    openClassroom();   // 先上节日小课堂热身，答完小问答才开始 5 步玩法
+  }
+
+  /* ---------- 事件 ---------- */
+  HOT_IDS.forEach(id => $(id).addEventListener('click', () => onHotClick(id)));
+
+  $('startBtn').addEventListener('click', startGame);
+  $('replayBtn').addEventListener('click', startGame);
+  $('wcNext').addEventListener('click', () => { sfx.pop(); nextStep(); });
+  $('wcSpeak').addEventListener('click', () => {
+    sfx.pop();
+    const st = STEPS[stepIndex];
+    speak(st.en, .72);
+    speakQueued(st.sentence, .92);
+  });
+  $('bubbleSpeak').addEventListener('click', () => {
+    sfx.pop();
+    if (clsActive) { if (clsSay) speak(clsSay, .85); return; }
+    if (started && stepIndex < STEPS.length) speak(STEPS[stepIndex].instruction, .85);
+  });
+
+  /* ---------- 小课堂事件 ---------- */
+  $('clsSpeak').addEventListener('click', () => { sfx.pop(); if (clsSay) speak(clsSay, .85); });
+  $('clsBody').addEventListener('click', e => {
+    const el = e.target.closest('.cls-card, .cls-tile, .cls-tag, .cls-option');
+    if (!el) return;
+    if (el.classList.contains('cls-card')) clsReadOrigin(Number(el.dataset.i));
+    else if (el.classList.contains('cls-tile')) clsSelectTile(el.dataset.id);
+    else if (el.classList.contains('cls-tag')) clsTapTag(el);
+    else clsAnswer(el);
+  });
+  $('clsNext').addEventListener('click', () => {
+    if ($('clsNext').disabled) return;
+    sfx.pop();
+    if (clsPhase < 2) { clsPhase++; renderClassroom(); }
+    else closeClassroom();
+  });
+
+  initStars();
+</script>
+</body>
+</html>
